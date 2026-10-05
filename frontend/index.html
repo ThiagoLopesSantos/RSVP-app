@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Admin - RSVP</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7f6; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .container { 
+            background: #fff; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            width: 350px; 
+        }
+        h2 { text-align: center; color: #2f3542; margin-top: 0; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #555;}
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        
+        button { width: 100%; padding: 12px; border: none; border-radius: 4px; color: #fff; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; transition: 0.3s;}
+        .btn-login { background-color: #1e90ff; }
+        .btn-login:hover { background-color: #0b78e3; }
+        .btn-cadastro { background-color: #2ed573; }
+        .btn-cadastro:hover { background-color: #26b963; }
+        
+        .toggle-link { display: block; text-align: center; margin-top: 15px; color: #1e90ff; text-decoration: none; font-size: 14px; cursor: pointer; }
+        .toggle-link:hover { text-decoration: underline; }
+        
+        .escondido { display: none; }
+        .mensagem { text-align: center; font-size: 14px; margin-top: 15px; font-weight: bold; }
+        .sucesso { color: #2ed573; }
+        .erro { color: #ff4757; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- TELA DE LOGIN -->
+        <div id="telaLogin">
+            <h2>Login do Sistema</h2>
+            <form id="formLogin">
+                <div class="form-group">
+                    <label>E-mail:</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha:</label>
+                    <input type="password" id="loginSenha" required>
+                </div>
+                <button type="submit" class="btn-login">Entrar</button>
+            </form>
+            <a class="toggle-link" onclick="alternarTelas()">Não tem conta? Cadastre-se aqui</a>
+            <p id="msgLogin" class="mensagem erro"></p>
+        </div>
+
+        <!-- TELA DE CADASTRO -->
+        <div id="telaCadastro" class="escondido">
+            <h2>Novo Administrador</h2>
+            <form id="formCadastro">
+                <div class="form-group">
+                    <label>Nome:</label>
+                    <input type="text" id="cadNome" required>
+                </div>
+                <div class="form-group">
+                    <label>E-mail:</label>
+                    <input type="email" id="cadEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Celular:</label>
+                    <input type="text" id="cadCelular" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha:</label>
+                    <input type="password" id="cadSenha" required>
+                </div>
+                <button type="submit" class="btn-cadastro">Criar Conta</button>
+            </form>
+            <a class="toggle-link" onclick="alternarTelas()">Já tem uma conta? Faça o Login</a>
+            <p id="msgCadastro" class="mensagem"></p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000';
+
+        // Alterna entre os formulários ocultando um e mostrando o outro
+        function alternarTelas() {
+            document.getElementById('telaLogin').classList.toggle('escondido');
+            document.getElementById('telaCadastro').classList.toggle('escondido');
+            document.getElementById('msgLogin').innerText = '';
+            document.getElementById('msgCadastro').innerText = '';
+            // Limpa os campos ao trocar de tela
+            document.getElementById('formLogin').reset();
+            document.getElementById('formCadastro').reset();
+        }
+
+        // ---------- LÓGICA DE LOGIN ----------
+        document.getElementById('formLogin').addEventListener('submit', async function(evento) {
+            evento.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const senha = document.getElementById('loginSenha').value;
+            const msgBox = document.getElementById('msgLogin');
+            
+            msgBox.innerText = 'Autenticando...';
+
+            try {
+                const resposta = await fetch(`${API_URL}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, senha: senha })
+                });
+
+                const dados = await resposta.json();
+
+                if (resposta.ok && dados.access_token) {
+                    localStorage.setItem('meu_token_rsvp', dados.access_token);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    msgBox.innerText = dados.detail || dados.mensagem || "E-mail ou senha incorretos.";
+                }
+            } catch (erro) {
+                msgBox.innerText = "Erro ao conectar com o servidor. Verifique se a API está rodando.";
+            }
+        });
+
+        // ---------- LÓGICA DE CADASTRO ----------
+        document.getElementById('formCadastro').addEventListener('submit', async function(evento) {
+            evento.preventDefault();
+            
+            const nome = document.getElementById('cadNome').value;
+            const email = document.getElementById('cadEmail').value;
+            const celular = document.getElementById('cadCelular').value;
+            const senha = document.getElementById('cadSenha').value;
+            
+            const msgBox = document.getElementById('msgCadastro');
+            msgBox.className = 'mensagem';
+            msgBox.style.color = '#333';
+            msgBox.innerText = 'Criando conta...';
+
+            try {
+                const resposta = await fetch(`${API_URL}/admin/cadastrar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome: nome, email: email, celular: celular, senha: senha })
+                });
+
+                const dados = await resposta.json();
+
+                if (resposta.ok) {
+                    msgBox.className = 'mensagem sucesso';
+                    msgBox.innerText = "Cadastro realizado com sucesso! Redirecionando para o login...";
+                    
+                    // Aguarda 2 segundos e joga o usuário para a tela de login
+                    setTimeout(() => {
+                        alternarTelas();
+                        document.getElementById('loginEmail').value = email; // Já preenche o e-mail para facilitar
+                    }, 60000);
+                } else {
+                    msgBox.className = 'mensagem erro';
+                    msgBox.innerText = dados.detail || dados.mensagem || "Erro ao cadastrar.";
+                }
+            } catch (erro) {
+                msgBox.className = 'mensagem erro';
+                msgBox.innerText = "Erro ao conectar com o servidor.";
+            }
+        });
+    </script>
+</body>
+</html>

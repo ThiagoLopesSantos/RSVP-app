@@ -1,0 +1,88 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.card-convite {
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 450px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+h1, h2 { text-align: center; color: #2f3542; margin-top: 0; }
+p { text-align: center; color: #666; line-height: 1.5;}
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 14px; }
+.form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+
+button { width: 100%; padding: 12px; border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; }
+.btn-primary { background-color: #1e90ff; }
+.btn-primary:hover { background-color: #0b78e3; }
+
+.btn-confirmar { background-color: #2ed573; margin-top: 10px; }
+.btn-confirmar:hover { background-color: #26b963; }
+
+.btn-recusar { background-color: #ff4757; margin-top: 10px; }
+.btn-recusar:hover { background-color: #e84118; }
+
+.escondido { display: none; }
+
+.acompanhante-item {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.acompanhante-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-remover {
+    background-color: #ff4757;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    align-self: flex-end;
+}
+
+.aviso-crianca {
+    font-size: 12px;
+    color: #e67e22;
+    margin-top: 2px;
+}
+
+/* Tela de Conclusão */
+.tela-sucesso {
+    text-align: center;
+}
+.icone-sucesso {
+    font-size: 60px;
+    color: #2ed573;
+    margin-bottom: 10px;
+}
+.icone-recusa {
+    font-size: 60px;
+    color: #ff4757;
+    margin-bottom: 10px;
+}

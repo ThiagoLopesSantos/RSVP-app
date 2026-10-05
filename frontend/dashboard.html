@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - RSVP</title>
+    <!-- Linkando o arquivo CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="header">
+        <h1>Painel de Convidados</h1>
+        <div>
+            <button class="btn-novo" onclick="abrirModal()">+ Novo Convidado</button>
+            <button class="btn-sair" onclick="sair()">Sair</button>
+        </div>
+    </div>
+
+<div class="cards-container">
+        <!-- Seus cards já existentes (Total, Confirmados, etc...) ficam aqui -->
+        <div class="card">
+            <h3>Total na Lista</h3>
+            <p id="cardTotal">0</p>
+        </div>
+        <div class="card confirmados">
+            <h3>Confirmados</h3>
+            <p id="cardConfirmados">0</p>
+        </div>
+        <div class="card pendentes">
+            <h3>Pendentes</h3>
+            <p id="cardPendentes">0</p>
+        </div>
+        <div class="card recusados">
+            <h3>Não Vão</h3>
+            <p id="cardRecusados">0</p>
+        </div>
+    </div>
+
+    <!-- NOVA BARRA DE CONTROLES -->
+    <div class="controles-tabela">
+        <input type="text" id="buscaNome" placeholder="Buscar convidado por nome..." oninput="filtrarLista()">
+        
+        <select id="filtroStatus" onchange="filtrarLista()">
+            <option value="todos">Todos os Status</option>
+            <option value="confirmado">Confirmados</option>
+            <option value="pendente">Pendentes</option>
+            <option value="recusado">Não Vão</option>
+        </select>
+
+        <button class="btn-exportar" onclick="exportarCSV()">Baixar Planilha</button>
+    </div>
+
+    <table>        
+        <thead>
+            <tr>
+                <th>Nome do Convidado</th>
+                <th>Celular</th>
+                <th>Acompanhantes Livres</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaConvidados">
+            <tr><td colspan="5" style="text-align: center;">Carregando dados...</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Modal de Cadastro/Edição -->
+    <div id="modalConvidado" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modalTitulo">Cadastrar Convidado</h2>
+            <form id="formConvidado">
+                <!-- ID oculto para sabermos se estamos editando ou criando -->
+                <input type="hidden" id="convidadoId">
+                
+                <div class="form-group">
+                    <label>Nome Completo:</label>
+                    <input type="text" id="nome" required>
+                </div>
+                <div class="form-group">
+                    <label>Celular (Ex: 11999999999):</label>
+                    <input type="text" id="celular" required>
+                </div>
+                <div class="form-group">
+                    <label>Limite de Acompanhantes:</label>
+                    <input type="number" id="limite" min="0" value="0" required>
+                </div>
+
+                <div class="modal-acoes">
+                    <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn-salvar">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Linkando o arquivo JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

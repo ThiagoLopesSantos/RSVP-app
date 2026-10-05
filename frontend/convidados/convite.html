@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação de Presença - Casamento</title>
+    <link rel="stylesheet" href="convite.css">
+</head>
+<body>
+
+    <div class="card-convite">
+        <!-- ETAPA 1: DIGITAR O CELULAR -->
+        <div id="etapaBusca">
+            <h2>Confirme sua Presença</h2>
+            <p>Digite o número do celular cadastrado no convite para acessar a sua área de convidado.</p>
+            
+            <form id="formBusca">
+                <div class="form-group">
+                    <label>Celular (Ex: 21999999999):</label>
+                    <input type="text" id="celularBusca" placeholder="Somente números com DDD" required>
+                </div>
+                <button type="submit" class="btn-primary">Acessar Convite</button>
+            </form>
+            <p id="msgErroBusca" style="color: #ff4757; font-size: 14px; text-align: center; margin-top: 15px; font-weight: bold;"></p>
+        </div>
+
+        <!-- ETAPA 2: DADOS E CONFIRMAÇÃO -->
+        <div id="etapaConvite" class="escondido">
+            <h2>Olá, <span id="spanNome"></span>!</h2>
+            <p>É uma alegria ter você conosco neste momento especial. Por favor, confirme sua presença abaixo.</p>
+            
+            <div style="background: #f1f2f6; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                <strong>Seu limite de acompanhantes:</strong> <span id="spanLimite">0</span> pessoa(s)
+            </div>
+
+            <form id="formConfirmacao">
+                <!-- SEÇÃO DE ACOMPANHANTES -->
+                <div id="secaoAcompanhantes" class="escondido">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <label style="margin: 0; font-weight: bold;">Seus Acompanhantes:</label>
+                        <button type="button" id="btnAdicionarAcomp" onclick="adicionarCampoAcompanhante()" style="width: auto; padding: 6px 12px; font-size: 12px; background-color: #1e90ff;">+ Adicionar</button>
+                    </div>
+                    
+                    <div id="listaAcompanhantesCampos"></div>
+                    <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
+                </div>
+
+                <div class="form-group">
+                    <label style="text-align: center;">Você irá ao evento?</label>
+                    <button type="button" class="btn-confirmar" onclick="enviarResposta('confirmado')">SIM, Eu vou!</button>
+                    <button type="button" class="btn-recusar" onclick="enviarResposta('recusado')">NÃO poderei ir</button>
+                </div>
+            </form>
+            <p id="msgProcessando" style="text-align: center; font-weight: bold; margin-top: 15px;"></p>
+        </div>
+
+        <!-- ETAPA 3: FEEDBACK DE SUCESSO -->
+        <div id="etapaConclusao" class="escondido tela-sucesso">
+            <div id="iconeConclusao" class="icone-sucesso">✔️</div>
+            <h2 id="tituloConclusao">Presença Confirmada!</h2>
+            <p id="textoConclusao">Seus dados foram salvos com sucesso. Agradecemos a confirmação e mal podemos esperar para celebrar com você!</p>
+            <button type="button" class="btn-primary" onclick="window.location.reload()" style="margin-top: 20px;">Consultar outro número</button>
+        </div>
+    </div>
+
+    <script src="convite.js"></script>
+</body>
+</html>

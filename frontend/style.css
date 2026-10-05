@@ -1,0 +1,98 @@
+/* style.css */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.btn-sair {
+    background-color: #ff4757; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;
+}
+.btn-novo {
+    background-color: #2ed573; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-right: 10px;
+}
+
+/* Cards */
+.cards-container { display: flex; gap: 20px; margin-bottom: 30px; }
+.card { flex: 1; background: #fff; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-bottom: 4px solid #ccc; }
+.card h3 { margin: 0; font-size: 14px; color: #666; text-transform: uppercase; }
+.card p { margin: 10px 0 0; font-size: 32px; font-weight: bold; color: #2f3542; }
+.card.confirmados { border-color: #2ed573; }
+.card.pendentes { border-color: #ffa502; }
+.card.recusados { border-color: #ff4757; }
+
+/* Tabela */
+table { width: 100%; background: #fff; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+th { background-color: #f1f2f6; color: #2f3542; }
+tr:hover { background-color: #f9f9f9; }
+
+.status { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.status.confirmado { background-color: #e2f8eb; color: #2ed573; }
+.status.pendente { background-color: #fff3cd; color: #ffa502; }
+.status.recusado { background-color: #ffeaea; color: #ff4757; }
+
+.btn-acao { border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; color: white; margin-right: 5px; }
+.btn-editar { background-color: #1e90ff; }
+.btn-excluir { background-color: #ff4757; }
+
+/* Modal (Escondido por padrão) */
+.modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center;
+}
+.modal-overlay.ativo { display: flex; }
+
+.modal-content {
+    background: #fff; padding: 30px; border-radius: 8px; width: 400px; max-width: 90%; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.modal-content h2 { margin-top: 0; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-group input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+.modal-acoes { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.btn-cancelar { background-color: #ccc; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+.btn-salvar { background-color: #1e90ff; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+
+/* Controles da Tabela (Busca e Filtros) */
+.controles-tabela {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    gap: 15px;
+}
+
+.controles-tabela input, .controles-tabela select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.controles-tabela input { flex: 1; }
+
+.btn-exportar {
+    background-color: #f39c12; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;
+}
+.btn-exportar:hover { background-color: #e67e22; }
+
+/* Botão do WhatsApp */
+.btn-zap { background-color: #25D366; }
