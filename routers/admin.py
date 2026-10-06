@@ -2,7 +2,7 @@ import sqlite3
 import json
 from fastapi import APIRouter, Depends, HTTPException, status
 from database import obter_conexao
-from schemas import AdminSchema, LoginSchema, ConvidadosSchema, EditarConvidadoSchema
+from schemas import AdminSchema, LoginSchema, ConvidadosSchema, EditarConvidadoSchema, EditarAdminSchema
 from auth import hash_senha, verificar_senha, criar_token_acesso, obter_admin_atual
 
 router = APIRouter(prefix="/admin", tags=["Administrador"])
@@ -218,3 +218,48 @@ def redefinir_senha(dados: dict):
             return {"status": "erro", "mensagem": "Administrador não encontrado."}
             
     return {"status": "sucesso", "mensagem": "Senha redefinida com sucesso!"}
+
+@router.get("/me")
+def obter_perfil(admin_logado: dict = Depends(obter_admin_atual)):
+    with obter_conexao() as conexao:
+        cursor = conexao.cursor()
+        cursor.execute("""
+            SELECT nome, email, celular, nome_evento, data_evento 
+            FROM administradores WHERE id = ?
+        """, (admin_logado["id"],))
+        admin = cursor.fetchone()
+        
+    return {
+        "status": "sucesso",
+        "perfil": {
+            "nome": admin[0],
+            "email": admin[1],
+            "celular": admin[2],
+            "nome_evento": admin[3],
+            "data_evento": admin[4]
+        }
+    }
+
+@router.put("/editar")
+def editar_admin(dados: EditarAdminSchema, admin_logado: dict = Depends(obter_admin_atual)):
+    with obter_conexao() as conexao:
+        cursor = conexao.cursor()
+        
+        # Se o usuário preencheu uma senha nova, atualiza com hash. Se não, ignora a senha.
+        if dados.senha:
+            senha_criptografada = hash_senha(dados.senha)
+            cursor.execute("""
+                UPDATE administradores 
+                SET nome = ?, celular = ?, nome_evento = ?, data_evento = ?, senha = ?
+                WHERE id = ?
+            """, (dados.nome, dados.celular, dados.nome_evento, dados.data_evento, senha_criptografada, admin_logado["id"]))
+        else:
+            cursor.execute("""
+                UPDATE administradores 
+                SET nome = ?, celular = ?, nome_evento = ?, data_evento = ?
+                WHERE id = ?
+            """, (dados.nome, dados.celular, dados.nome_evento, dados.data_evento, admin_logado["id"]))
+        
+        conexao.commit()
+        
+    return {"status": "sucesso", "mensagem": "Perfil atualizado com sucesso!"}

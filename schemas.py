@@ -38,3 +38,10 @@ class AcompanhanteSchema(BaseModel):
 class ConfirmarRsvpSchema(BaseModel):
     status_presenca: str  # 'confirmado' ou 'recusado'
     acompanhantes: Optional[List[AcompanhanteSchema]] = []
+
+class EditarAdminSchema(BaseModel):
+    nome: str
+    celular: str
+    nome_evento: str
+    data_evento: str
+    senha: Optional[str] = None  # Opcional: se vier vazio, não altera a senha

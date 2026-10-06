@@ -257,3 +257,64 @@ function sair() {
 }
 
 carregarConvidados();
+
+// ==================== PERFIL DO ADMIN ====================
+async function abrirModalPerfil() {
+    try {
+        const resposta = await fetch(`${API_URL}/admin/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const dados = await resposta.json();
+        
+        if (resposta.ok && dados.status === 'sucesso') {
+            document.getElementById('perfilNome').value = dados.perfil.nome;
+            document.getElementById('perfilEmail').value = dados.perfil.email;
+            document.getElementById('perfilCelular').value = dados.perfil.celular;
+            document.getElementById('perfilNomeEvento').value = dados.perfil.nome_evento;
+            document.getElementById('perfilDataEvento').value = dados.perfil.data_evento;
+            document.getElementById('perfilSenha').value = ''; // Sempre começa vazio
+            
+            document.getElementById('modalPerfil').classList.add('ativo');
+        } else {
+            alert("Erro ao carregar os dados do perfil.");
+        }
+    } catch (erro) {
+        alert("Erro de conexão com o servidor.");
+    }
+}
+
+function fecharModalPerfil() {
+    document.getElementById('modalPerfil').classList.remove('ativo');
+}
+
+document.getElementById('formPerfil').addEventListener('submit', async function(evento) {
+    evento.preventDefault();
+    
+    const payload = {
+        nome: document.getElementById('perfilNome').value,
+        celular: document.getElementById('perfilCelular').value,
+        nome_evento: document.getElementById('perfilNomeEvento').value,
+        data_evento: document.getElementById('perfilDataEvento').value,
+        senha: document.getElementById('perfilSenha').value || null // Envia null se estiver vazio
+    };
+
+    const resposta = await fetch(`${API_URL}/admin/editar`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload)
+    });
+
+    const dados = await resposta.json();
+
+    if (resposta.ok && dados.status === 'sucesso') {
+        // Atualiza os dados no localStorage para o relógio da dashboard atualizar
+        localStorage.setItem('nome_evento', payload.nome_evento);
+        localStorage.setItem('data_evento', payload.data_evento);
+        
+        fecharModalPerfil();
+        alert("Perfil atualizado com sucesso!");
+        window.location.reload(); // Recarrega a página para atualizar o título e o relógio
+    } else {
+        alert(`Erro: ${dados.mensagem || dados.detail || 'Falha ao salvar'}`);
+    }
+});
