@@ -117,6 +117,7 @@ async function enviarResposta(status) {
         const dados = await resposta.json();
 
         if (resposta.ok) {
+            msgProcessando.innerText = '';
             exibirTelaConclusao(status);
         } else {
             msgProcessando.style.color = '#ff4757';
@@ -147,4 +148,9 @@ function exibirTelaConclusao(status) {
         titulo.innerText = 'Resposta Registrada';
         texto.innerText = 'Sentiremos muito a sua falta, mas agradecemos por nos avisar. Obrigado!';
     }
+
+    // Dá tempo suficiente para a pessoa ler (ex: 6 segundos) e recarrega a página para o próximo
+    setTimeout(() => {
+        window.location.reload(); 
+    }, 6000); // 6000 milissegundos = 6 segundos
 }
