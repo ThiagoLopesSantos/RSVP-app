@@ -22,7 +22,9 @@ def criar_tabelas():
                 nome TEXT NOT NULL,
                 email TEXT UNIQUE NOT NULL,
                 celular TEXT NOT NULL,
-                senha TEXT NOT NULL
+                senha TEXT NOT NULL,
+                nome_evento TEXT,
+                data_evento TEXT
             )
         """)
         

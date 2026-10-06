@@ -7,6 +7,8 @@ class AdminSchema(BaseModel):
     email: str
     celular: str
     senha: str 
+    nome_evento: str
+    data_evento: str
 
 class LoginSchema(BaseModel):
     email: str

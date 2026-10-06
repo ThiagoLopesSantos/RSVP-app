@@ -7,6 +7,36 @@ if (!token) {
 
 let listaGlobalConvidados = [];
 
+// Configuração do Evento e Contagem Regressiva
+const nomeEventoSalvo = localStorage.getItem('nome_evento');
+const dataEventoSalva = localStorage.getItem('data_evento');
+
+if (nomeEventoSalvo && dataEventoSalva) {
+    document.getElementById('tituloEvento').innerText = `Casamento: ${nomeEventoSalvo}`;
+    
+    // Calcula os dias restantes
+    const hoje = new Date();
+    // Zera as horas para o cálculo ser exato pelos dias
+    hoje.setHours(0, 0, 0, 0); 
+    
+    // Adiciona o timezone 'T00:00:00' para evitar que o fuso horário subtraia 1 dia
+    const dataCasamento = new Date(`${dataEventoSalva}T00:00:00`); 
+    
+    const diferencaTempo = dataCasamento.getTime() - hoje.getTime();
+    const diasRestantes = Math.ceil(diferencaTempo / (1000 * 3600 * 24));
+
+    const pContagem = document.getElementById('contagemRegressiva');
+    if (diasRestantes > 0) {
+        pContagem.innerText = `⏳ Faltam ${diasRestantes} dias para o grande dia!`;
+    } else if (diasRestantes === 0) {
+        pContagem.innerText = `🎉 É hoje! Aproveitem muito!`;
+        pContagem.style.color = '#2ed573';
+    } else {
+        pContagem.innerText = `💍 Casados há ${Math.abs(diasRestantes)} dias!`;
+        pContagem.style.color = '#718093';
+    }
+}
+
 // ==================== CARREGAMENTO ====================
 async function carregarConvidados() {
     try {

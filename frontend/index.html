@@ -82,6 +82,14 @@
                     <input type="text" id="cadCelular" required>
                 </div>
                 <div class="form-group">
+                    <label>Nome do Evento (Ex: Casamento noiva & noivo):</label>
+                    <input type="text" id="cadNomeEvento" required>
+                </div>
+                <div class="form-group">
+                    <label>Data do Evento:</label>
+                    <input type="date" id="cadDataEvento" required>
+                </div>
+                <div class="form-group">
                     <label>Senha:</label>
                     <input type="password" id="cadSenha" required>
                 </div>
@@ -175,6 +183,8 @@
 
                 if (resposta.ok && dados.access_token) {
                     localStorage.setItem('meu_token_rsvp', dados.access_token);
+                    localStorage.setItem('nome_evento', dados.nome_evento);
+                    localStorage.setItem('data_evento', dados.data_evento);
                     window.location.href = 'dashboard.html';
                 } else {
                     msgBox.innerText = dados.detail || dados.mensagem || "E-mail ou senha incorretos.";
@@ -191,6 +201,8 @@
             const nome = document.getElementById('cadNome').value;
             const email = document.getElementById('cadEmail').value;
             const celular = document.getElementById('cadCelular').value;
+            const nomeEvento = document.getElementById('cadNomeEvento').value;
+            const dataEvento = document.getElementById('cadDataEvento').value;
             const senha = document.getElementById('cadSenha').value;
             
             const msgBox = document.getElementById('msgCadastro');
@@ -202,23 +214,24 @@
                 const resposta = await fetch(`${API_URL}/admin/cadastrar`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: nome, email: email, celular: celular, senha: senha })
+                    body: JSON.stringify({ nome: nome, email: email, celular: celular, nome_evento: nomeEvento, data_evento: dataEvento, senha: senha })
                 });
 
                 const dados = await resposta.json();
 
-                if (resposta.ok) {
+                // O SEGREDO É ESSA LINHA ABAIXO. Precisamos exigir que o status seja 'sucesso'
+                if (resposta.ok && dados.status === 'sucesso') {
                     msgBox.className = 'mensagem sucesso';
                     msgBox.innerText = "Cadastro realizado com sucesso! Redirecionando para o login...";
                     
-                    // Aguarda 2 segundos e joga o usuário para a tela de login
                     setTimeout(() => {
-                        alternarTelas();
-                        document.getElementById('loginEmail').value = email; // Já preenche o e-mail para facilitar
-                    }, 60000);
+                        alternarTelas('telaLogin');
+                        document.getElementById('loginEmail').value = email; 
+                    }, 2000);
                 } else {
+                    // Agora sim, se o banco falhar, o erro vai aparecer em vermelho!
                     msgBox.className = 'mensagem erro';
-                    msgBox.innerText = dados.detail || dados.mensagem || "Erro ao cadastrar.";
+                    msgBox.innerText = dados.mensagem || dados.detail || "Erro ao cadastrar.";
                 }
             } catch (erro) {
                 msgBox.className = 'mensagem erro';

@@ -15,9 +15,9 @@ def cadastrar_admin(admin: AdminSchema):
             senha_criptografada = hash_senha(admin.senha)
 
             cursor.execute("""
-                INSERT INTO administradores (nome, email, celular, senha)
-                VALUES (?, ?, ?, ?)
-            """, (admin.nome, admin.email, admin.celular, senha_criptografada))
+                INSERT INTO administradores (nome, email, celular, senha, nome_evento, data_evento)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (admin.nome, admin.email, admin.celular, senha_criptografada, admin.nome_evento, admin.data_evento))
             conexao.commit()
 
         return {
@@ -36,7 +36,7 @@ def login_admin(credenciais: LoginSchema):
         cursor = conexao.cursor()
 
         cursor.execute(""" 
-            SELECT id, nome, email, senha FROM administradores
+            SELECT id, nome, email, senha, nome_evento, data_evento FROM administradores
             WHERE email = ?
         """, (credenciais.email,))
 
@@ -62,7 +62,9 @@ def login_admin(credenciais: LoginSchema):
             "status": "sucesso",
             "mensagem": f"Login realizado com sucesso! Bem-vindo de volta, {admin_encontrado[1]}.",
             "access_token": token_acesso,
-            "token_type": "bearer"
+            "token_type": "bearer",
+            "nome_evento": admin_encontrado[4],
+            "data_evento": admin_encontrado[5]
         }
 
 @router.post("/convidados/cadastrar")
