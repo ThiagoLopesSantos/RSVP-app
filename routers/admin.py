@@ -12,8 +12,13 @@ def cadastrar_admin(admin: AdminSchema):
     try:
         with obter_conexao() as conexao:
             cursor = conexao.cursor()
-            senha_criptografada = hash_senha(admin.senha)
 
+            # Verifica se o email já existe para dar um feedback limpo
+            cursor.execute("SELECT id FROM administradores WHERE email = ?", (admin.email,))
+            if cursor.fechone():
+                return {"status": "erro", "mensagem": "Este email já está cadastrado no sistema."}
+            
+            senha_criptografada = hash_senha(admin.senha)
             cursor.execute("""
                 INSERT INTO administradores (nome, email, celular, senha, nome_evento, data_evento)
                 VALUES (?, ?, ?, ?, ?, ?)
