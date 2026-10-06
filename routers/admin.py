@@ -15,7 +15,7 @@ def cadastrar_admin(admin: AdminSchema):
 
             # Verifica se o email já existe para dar um feedback limpo
             cursor.execute("SELECT id FROM administradores WHERE email = ?", (admin.email,))
-            if cursor.fechone():
+            if cursor.fetchone():
                 return {"status": "erro", "mensagem": "Este email já está cadastrado no sistema."}
             
             senha_criptografada = hash_senha(admin.senha)

@@ -90,8 +90,12 @@
                     <input type="date" id="cadDataEvento" required>
                 </div>
                 <div class="form-group">
-                    <label>Senha:</label>
-                    <input type="password" id="cadSenha" required>
+                    <label>Senha (Mínimo de 6 caracteres):</label>
+                    <input type="password" id="cadSenha" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Senha:</label>
+                    <input type="password" id="cadConfirmaSenha" minlength="6" required>                
                 </div>
                 <button type="submit" class="btn-cadastro">Criar Conta</button>
             </form>
@@ -119,8 +123,12 @@
             <!-- Etapa 2: Nova Senha (Oculto até verificar) -->
             <form id="formNovaSenha" class="escondido" style="margin-top: 15px;">
                 <div class="form-group">
-                    <label>Nova Senha:</label>
-                    <input type="password" id="recNovaSenha" required>
+                    <label>Nova Senha (Mínimo de 6 caracteres):</label>
+                    <input type="password" id="recNovaSenha" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Nova Senha:</label>
+                    <input type="password" id="recConfirmaNovaSenha" minlength="6" required>
                 </div>
                 <button type="submit" class="btn-cadastro">Salvar Nova Senha</button>
             </form>
@@ -204,8 +212,21 @@
             const nomeEvento = document.getElementById('cadNomeEvento').value;
             const dataEvento = document.getElementById('cadDataEvento').value;
             const senha = document.getElementById('cadSenha').value;
-            
+            const confirmaSenha = document.getElementById('cadConfirmaSenha').value;
             const msgBox = document.getElementById('msgCadastro');
+
+
+            // Validação de Segurança da Senha
+            if (senha.length < 6) {
+                msgBox.ClassName = 'mensagem erro';
+                msgBox.innerText = "A senha precisa ter pelo menos 6 caracteres.";
+            }
+
+            if (senha !== confirmaSenha) {
+                msgBox.className = 'mensagem erro';
+                msgBox.innerText = "As senhas não coincidem. Verifique e tente novamente.";
+            }
+            
             msgBox.className = 'mensagem';
             msgBox.style.color = '#333';
             msgBox.innerText = 'Criando conta...';
@@ -214,7 +235,14 @@
                 const resposta = await fetch(`${API_URL}/admin/cadastrar`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: nome, email: email, celular: celular, nome_evento: nomeEvento, data_evento: dataEvento, senha: senha })
+                    body: JSON.stringify({ 
+                        nome: nome, 
+                        email: email, 
+                        celular: celular, 
+                        nome_evento: nomeEvento, 
+                        data_evento: dataEvento, 
+                        senha: senha 
+                    })
                 });
 
                 const dados = await resposta.json();
@@ -278,7 +306,21 @@
         document.getElementById('formNovaSenha').addEventListener('submit', async function(evento) {
             evento.preventDefault();
             const novaSenha = document.getElementById('recNovaSenha').value;
+            const confirmaNovaSenha = document.getElementById('recConfirmaNovaSenha').value;
             const msgBox = document.getElementById('msgRecuperacao');
+
+            // Validação de Segurança da Senha
+            if (novaSenha.length < 6) {
+                msgBox.className = 'mensagem erro';
+                msgBox.innerText = "A nova senha precisa ter pelo menos 6 caracteres.";
+                return;
+            }
+
+            if (novaSenha !== confirmaNovaSenha) {
+                msgBox.className = 'mensagem erro';
+                msgBox.innerText = "As senhas não coincidem.";
+                return;
+            }
             
             msgBox.className = 'mensagem';
             msgBox.style.color = '#333';
@@ -288,7 +330,10 @@
                 const resposta = await fetch(`${API_URL}/admin/redefinir-senha`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: emailValidadoParaTroca, nova_senha: novaSenha })
+                    body: JSON.stringify({ 
+                        email: emailValidadoParaTroca, 
+                        nova_senha: novaSenha 
+                    })
                 });
                 const dados = await resposta.json();
 
