@@ -176,3 +176,43 @@ def deletar_convidado(convidado_id: int, admin_logado: dict = Depends(obter_admi
         cursor.execute("DELETE FROM convidados WHERE id = ?", (convidado_id,))
         conexao.commit()
         return {"status": "sucesso", "mensagem": "Removido com sucesso!"}
+
+
+@router.post("/verificar-recuperacao")
+def verificar_recuperacao(dados: dict):
+    email = dados.get("email")
+    celular = dados.get("celular")
+    
+    with obter_conexao() as conexao:
+        cursor = conexao.cursor()
+        cursor.execute("SELECT id FROM administradores WHERE email = ? AND celular = ?", (email, celular))
+        admin = cursor.fetchone()
+        
+        if not admin:
+            return {"status": "erro", "mensagem": "E-mail ou celular não conferem com nossos registros."}
+            
+        return {"status": "sucesso", "admin_id": admin[0]}
+
+@router.post("/redefinir-senha")
+def redefinir_senha(dados: dict):
+    email = dados.get("email")
+    nova_senha = dados.get("nova_senha")
+    
+    if not email or not nova_senha:
+        return {"status": "erro", "mensagem": "Dados incompletos."}
+        
+    senha_criptografada = hash_senha(nova_senha)
+    
+    with obter_conexao() as conexao:
+        cursor = conexao.cursor()
+        cursor.execute("""
+            UPDATE administradores 
+            SET senha = ? 
+            WHERE email = ?
+        """, (senha_criptografada, email))
+        conexao.commit()
+        
+        if cursor.rowcount == 0:
+            return {"status": "erro", "mensagem": "Administrador não encontrado."}
+            
+    return {"status": "sucesso", "mensagem": "Senha redefinida com sucesso!"}

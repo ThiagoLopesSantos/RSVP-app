@@ -111,37 +111,66 @@ function filtrarLista() {
     renderizarTabela(filtrados);
 }
 
-// ==================== EXPORTAR CSV ====================
-function exportarCSV() {
+// ==================== EXPORTAR EXCEL ====================
+function exportarExcel() {
     const dadosParaExportar = obterConvidadosFiltrados();
 
     if (dadosParaExportar.length === 0) {
         return alert("Não há dados filtrados para exportar.");
     }
     
-    let csv = "Tipo,Nome / Acompanhante,Idade,Celular,Limite Acompanhantes,Status\n";
+    // Prepara os dados no formato que o Excel entende (Array de Objetos)
+    const linhasExcel = [];
     
     dadosParaExportar.forEach(c => {
-        csv += `"Titular","${c.nome_completo}","-","${c.celular}",${c.limite_acompanhantes},"${c.status_presenca}"\n`;
+        // Adiciona a linha do titular
+        linhasExcel.push({
+            "Tipo": "Titular",
+            "Nome / Acompanhante": c.nome_completo,
+            "Idade": "-",
+            "Celular": c.celular,
+            "Limite Acompanhantes": c.limite_acompanhantes,
+            "Status": c.status_presenca.toUpperCase()
+        });
         
+        // Adiciona as linhas dos acompanhantes, se houver
         if (c.nome_acompanhante && c.nome_acompanhante.length > 0) {
             c.nome_acompanhante.forEach(a => {
-                csv += `"Acompanhante","${a.nome}",${a.idade},"-","-","-"\n`;
+                linhasExcel.push({
+                    "Tipo": "Acompanhante",
+                    "Nome / Acompanhante": a.nome,
+                    "Idade": a.idade,
+                    "Celular": "-",
+                    "Limite Acompanhantes": "-",
+                    "Status": "-"
+                });
             });
         }
     });
     
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'lista_detalhada_rsvp.csv';
-    link.click();
+    // Cria a planilha e a pasta de trabalho usando o SheetJS
+    const worksheet = XLSX.utils.json_to_sheet(linhasExcel);
+    const workbook = XLSX.utils.book_new();
+    
+    // Ajusta a largura das colunas para ficar bonito
+    worksheet['!cols'] = [
+        { wch: 15 }, // Tipo
+        { wch: 35 }, // Nome
+        { wch: 10 }, // Idade
+        { wch: 15 }, // Celular
+        { wch: 20 }, // Limite Acompanhantes
+        { wch: 15 }  // Status
+    ];
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Convidados");
+    
+    // Força o download do arquivo .xlsx
+    XLSX.writeFile(workbook, 'lista_detalhada_rsvp.xlsx');
 }
 
 function cobrarWhatsApp(nome, celular) {
     const numeroLimpo = celular.replace(/\D/g, '');
-    const linkPortal = "http://meusite.com/rsvp"; 
+    const linkPortal = "http://127.0.0.1:5500/frontend/convidados/convite.html"; 
     const mensagem = `Olá, ${nome}! Estamos passando para lembrar de confirmar sua presença no nosso casamento. Por favor, acesse o link e nos avise: ${linkPortal}`;
     const url = `https://wa.me/55${numeroLimpo}?text=${encodeURIComponent(mensagem)}`;
     window.open(url, '_blank');

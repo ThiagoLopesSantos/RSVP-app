@@ -31,11 +31,13 @@
         .btn-login:hover { background-color: #0b78e3; }
         .btn-cadastro { background-color: #2ed573; }
         .btn-cadastro:hover { background-color: #26b963; }
-        
+        .btn-recuperar { background-color: #f39c12; }
+        .btn-recuperar:hover { background-color: #d35400; }
+
         .toggle-link { display: block; text-align: center; margin-top: 15px; color: #1e90ff; text-decoration: none; font-size: 14px; cursor: pointer; }
         .toggle-link:hover { text-decoration: underline; }
         
-        .escondido { display: none; }
+        .escondido { display: none !important;}
         .mensagem { text-align: center; font-size: 14px; margin-top: 15px; font-weight: bold; }
         .sucesso { color: #2ed573; }
         .erro { color: #ff4757; }
@@ -58,7 +60,8 @@
                 </div>
                 <button type="submit" class="btn-login">Entrar</button>
             </form>
-            <a class="toggle-link" onclick="alternarTelas()">Não tem conta? Cadastre-se aqui</a>
+            <a class="toggle-link" onclick="alternarTelas('telaCadastro')">Não tem conta? Cadastre-se aqui</a>
+            <a class="toggle-link" onclick="alternarTelas('telaRecuperacao')" style="color: #666; margin-top: 8px;">Esqueceu sua senha?</a>
             <p id="msgLogin" class="mensagem erro"></p>
         </div>
 
@@ -84,23 +87,71 @@
                 </div>
                 <button type="submit" class="btn-cadastro">Criar Conta</button>
             </form>
-            <a class="toggle-link" onclick="alternarTelas()">Já tem uma conta? Faça o Login</a>
-            <p id="msgCadastro" class="mensagem"></p>
+            <a class="toggle-link" onclick="alternarTelas('telaLogin')">Já tem uma conta? Faça o Login</a>            <p id="msgCadastro" class="mensagem"></p>
         </div>
+        
+        <!-- TELA DE RECUPERAÇÃO DE SENHA -->
+        <div id="telaRecuperacao" class="escondido">
+            <h2>Recuperar Senha</h2>
+            
+            <!-- Etapa 1: Validar E-mail e Celular -->
+            <form id="formVerificaRecrutamento">
+                <p style="font-size: 13px; color: #666; text-align: center;">Informe seus dados cadastrados para autenticar sua identidade:</p>
+                <div class="form-group">
+                    <label>E-mail cadastrado:</label>
+                    <input type="email" id="recEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Celular cadastrado:</label>
+                    <input type="text" id="recCelular" required>
+                </div>
+                <button type="submit" class="btn-recuperar">Verificar Identidade</button>
+            </form>
+            
+            <!-- Etapa 2: Nova Senha (Oculto até verificar) -->
+            <form id="formNovaSenha" class="escondido" style="margin-top: 15px;">
+                <div class="form-group">
+                    <label>Nova Senha:</label>
+                    <input type="password" id="recNovaSenha" required>
+                </div>
+                <button type="submit" class="btn-cadastro">Salvar Nova Senha</button>
+            </form>
+            
+            <a class="toggle-link" onclick="alternarTelas('telaLogin')" style="margin-top: 15px;">Voltar ao Login</a>
+            <p id="msgRecuperacao" class="mensagem"></p>
+        </div>
+    
     </div>
 
     <script>
         const API_URL = 'http://127.0.0.1:8000';
 
-        // Alterna entre os formulários ocultando um e mostrando o outro
-        function alternarTelas() {
-            document.getElementById('telaLogin').classList.toggle('escondido');
-            document.getElementById('telaCadastro').classList.toggle('escondido');
+        // Alterna entre os formulários escondendo todos e mostrando só o desejado
+        function alternarTelas(idTelaDesejada) {
+            // 1. Esconde todas as telas garantido
+            document.getElementById('telaLogin').classList.add('escondido');
+            document.getElementById('telaCadastro').classList.add('escondido');
+            document.getElementById('telaRecuperacao').classList.add('escondido');
+
+            // 2. Mostra apenas a tela que foi chamada no clique
+            if (idTelaDesejada) {
+                document.getElementById(idTelaDesejada).classList.remove('escondido');
+            }
+
+            // 3. Limpa todas as mensagens de erro/sucesso para não confundir o usuário
             document.getElementById('msgLogin').innerText = '';
             document.getElementById('msgCadastro').innerText = '';
-            // Limpa os campos ao trocar de tela
+            document.getElementById('msgRecuperacao').innerText = '';
+
+            // 4. Limpa todos os formulários ao trocar de tela
             document.getElementById('formLogin').reset();
             document.getElementById('formCadastro').reset();
+            document.getElementById('formVerificaRecrutamento').reset();
+            document.getElementById('formNovaSenha').reset();
+            
+            // Esconde a etapa de nova senha e volta para a verificação caso ele saia e volte
+            document.getElementById('formNovaSenha').classList.add('escondido');
+            document.getElementById('formVerificaRecrutamento').classList.remove('escondido');
         }
 
         // ---------- LÓGICA DE LOGIN ----------
@@ -174,6 +225,74 @@
                 msgBox.innerText = "Erro ao conectar com o servidor.";
             }
         });
+
+        // ---------- RECUPERAÇÃO - ETAPA 1: VERIFICAR ----------
+        document.getElementById('formVerificaRecrutamento').addEventListener('submit', async function(evento) {
+            evento.preventDefault();
+            const email = document.getElementById('recEmail').value;
+            const celular = document.getElementById('recCelular').value;
+            const msgBox = document.getElementById('msgRecuperacao');
+            
+            msgBox.className = 'mensagem';
+            msgBox.style.color = '#333';
+            msgBox.innerText = 'Verificando dados...';
+
+            try {
+                const resposta = await fetch(`${API_URL}/admin/verificar-recuperacao`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, celular: celular })
+                });
+                const dados = await resposta.json();
+
+                if (resposta.ok && dados.status === 'sucesso') {
+                    emailValidadoParaTroca = email;
+                    msgBox.className = 'mensagem sucesso';
+                    msgBox.innerText = "Identidade confirmada! Digite sua nova senha abaixo.";
+                    document.getElementById('formVerificaRecrutamento').classList.add('escondido');
+                    document.getElementById('formNovaSenha').classList.remove('escondido');
+                } else {
+                    msgBox.className = 'mensagem erro';
+                    msgBox.innerText = dados.mensagem || "Dados não encontrados.";
+                }
+            } catch (erro) {
+                msgBox.className = 'mensagem erro';
+                msgBox.innerText = "Erro ao conectar com o servidor.";
+            }
+        });
+
+        // ---------- RECUPERAÇÃO - ETAPA 2: SALVAR NOVA SENHA ----------
+        document.getElementById('formNovaSenha').addEventListener('submit', async function(evento) {
+            evento.preventDefault();
+            const novaSenha = document.getElementById('recNovaSenha').value;
+            const msgBox = document.getElementById('msgRecuperacao');
+            
+            msgBox.className = 'mensagem';
+            msgBox.style.color = '#333';
+            msgBox.innerText = 'Salvando nova senha...';
+
+            try {
+                const resposta = await fetch(`${API_URL}/admin/redefinir-senha`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: emailValidadoParaTroca, nova_senha: novaSenha })
+                });
+                const dados = await resposta.json();
+
+                if (resposta.ok && dados.status === 'sucesso') {
+                    msgBox.className = 'mensagem sucesso';
+                    msgBox.innerHTML = `Senha alterada com sucesso!<br><a onclick="alternarTelas('telaLogin'); document.getElementById('loginEmail').value='${emailValidadoParaTroca}';" style="color: #1e90ff; cursor: pointer; text-decoration: underline;">Ir para o Login</a>`;
+                    document.getElementById('formNovaSenha').classList.add('escondido');
+                } else {
+                    msgBox.className = 'mensagem erro';
+                    msgBox.innerText = dados.mensagem || "Erro ao redefinir.";
+                }
+            } catch (erro) {
+                msgBox.className = 'mensagem erro';
+                msgBox.innerText = "Erro ao conectar com o servidor.";
+            }
+        });
+
     </script>
 </body>
 </html>
