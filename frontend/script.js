@@ -121,28 +121,24 @@ function exportarExcel() {
     
     // Prepara os dados no formato que o Excel entende (Array de Objetos)
     const linhasExcel = [];
+    let contador = 1; // variavel para criar a numeração sequencial
     
     dadosParaExportar.forEach(c => {
         // Adiciona a linha do titular
         linhasExcel.push({
+            "Nº": contador++,
             "Tipo": "Titular",
-            "Nome / Acompanhante": c.nome_completo,
-            "Idade": "-",
+            "Nome": c.nome_completo,
             "Celular": c.celular,
-            "Limite Acompanhantes": c.limite_acompanhantes,
-            "Status": c.status_presenca.toUpperCase()
         });
         
         // Adiciona as linhas dos acompanhantes, se houver
         if (c.nome_acompanhante && c.nome_acompanhante.length > 0) {
             c.nome_acompanhante.forEach(a => {
                 linhasExcel.push({
+                    "Nº": contador++,
                     "Tipo": "Acompanhante",
-                    "Nome / Acompanhante": a.nome,
-                    "Idade": a.idade,
-                    "Celular": "-",
-                    "Limite Acompanhantes": "-",
-                    "Status": "-"
+                    "Nome": a.nome,
                 });
             });
         }
@@ -154,20 +150,19 @@ function exportarExcel() {
     
     // Ajusta a largura das colunas para ficar bonito
     worksheet['!cols'] = [
+        { wch: 5 },  // Nº
         { wch: 15 }, // Tipo
         { wch: 35 }, // Nome
-        { wch: 10 }, // Idade
         { wch: 15 }, // Celular
-        { wch: 20 }, // Limite Acompanhantes
-        { wch: 15 }  // Status
     ];
 
     XLSX.utils.book_append_sheet(workbook, worksheet, "Convidados");
     
     // Força o download do arquivo .xlsx
-    XLSX.writeFile(workbook, 'lista_detalhada_rsvp.xlsx');
+    XLSX.writeFile(workbook, 'lista_convidados_rsvp.xlsx');
 }
 
+// ==================== COBRAR WHATSAPP ====================
 function cobrarWhatsApp(nome, celular) {
     const numeroLimpo = celular.replace(/\D/g, '');
     const linkPortal = "http://127.0.0.1:5500/frontend/convidados/convite.html"; 
