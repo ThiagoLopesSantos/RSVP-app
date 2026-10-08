@@ -1,88 +1,189 @@
+/* =================================================================
+SUNSHINE EVENTS - CONVITE.CSS (Portal do Convidado)
+================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap');
+
+:root {
+    --primary-color: #2f3542;
+    --accent-color: #f39c12;
+    --success-color: #2ed573;
+    --danger-color: #ff4757;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-main: #333333;
+    --text-muted: #718093;
+    --border-color: #e2e8f0;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    color: #333;
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
     margin: 0;
     padding: 20px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-}
-
-.card-convite {
-    background: #fff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    width: 450px;
-    max-width: 100%;
     box-sizing: border-box;
 }
 
-h1, h2 { text-align: center; color: #2f3542; margin-top: 0; }
-p { text-align: center; color: #666; line-height: 1.5;}
+/* Cabeçalho da Marca */
+.brand-header {
+    text-align: center;
+    margin-bottom: 25px;
+    border: 1px solid var(--accent-color);
+    padding: 10px;
+    border-radius: 19px 0;
+    box-shadow: 0 0 20px 0px rgba(154, 154, 0, 0.5);
 
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 14px; }
-.form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+    
+    h1 {
+        font-family: 'Playfair Display', serif;
+        margin: 0;
+        color: var(--primary-color);
+        font-size: 40px;
+    }
 
-button { width: 100%; padding: 12px; border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; }
-.btn-primary { background-color: #1e90ff; }
-.btn-primary:hover { background-color: #0b78e3; }
-
-.btn-confirmar { background-color: #2ed573; margin-top: 10px; }
-.btn-confirmar:hover { background-color: #26b963; }
-
-.btn-recusar { background-color: #ff4757; margin-top: 10px; }
-.btn-recusar:hover { background-color: #e84118; }
-
-.escondido { display: none; }
-
-.acompanhante-item {
-    background: #f8f9fa;
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    border: 1px solid #e9ecef;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    p {
+        font-size: 11px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-top: 6px;
+        font-weight: 600;
+    }
 }
 
-.acompanhante-inputs {
-    display: flex;
-    gap: 10px;
-}
-
-.btn-remover {
-    background-color: #ff4757;
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    align-self: flex-end;
-}
-
-.aviso-crianca {
-    font-size: 12px;
-    color: #e67e22;
-    margin-top: 2px;
-}
-
-/* Tela de Conclusão */
-.tela-sucesso {
+/* Card Principal */
+.convite-container {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 480px;
+    box-sizing: border-box;
     text-align: center;
 }
+
+.convite-container h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary-color);
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.convite-container p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Formulários e Inputs */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--primary-color);
+}
+
+.form-group input, 
+.form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    background-color: #fafbfc;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
+}
+
+/* Botões Gerais de Ação */
+.btn-primary, .btn-acao {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover, .btn-acao:hover {
+    background-color: #1e272e;
+    transform: translateY(-1px);
+}
+
+/* Botões Específicos de Confirmação e Recusa */
+.btn-confirmar {
+    background-color: var(--success-color);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 10px;
+    transition: opacity 0.2s;
+}
+
+.btn-confirmar:hover { opacity: 0.9; }
+
+.btn-recusar {
+    background-color: var(--danger-color);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    transition: opacity 0.2s;
+}
+
+.btn-recusar:hover { opacity: 0.9; }
+
+/* Ícones de Feedback (Sucesso / Recusa) */
 .icone-sucesso {
-    font-size: 60px;
-    color: #2ed573;
+    font-size: 50px;
+    color: var(--success-color);
     margin-bottom: 10px;
 }
+
 .icone-recusa {
-    font-size: 60px;
-    color: #ff4757;
+    font-size: 50px;
+    color: var(--danger-color);
     margin-bottom: 10px;
+}
+
+/* Utilitários */
+.escondido {
+    display: none !important;
 }

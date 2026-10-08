@@ -8,132 +8,135 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-
-        <div class="header">
-            <div>
-                <h1 id="tituloEvento" style="margin: 0; color: #2f3542;">Painel de Convidados</h1>
-                <p id="contagemRegressiva" style="margin: 5px 0 0 0; color: #1e90ff; font-weight: bold; font-size: 14px;"></p>
+        <div class="dashboard-container">
+            <div class="header">
+                <div class="header-brand-info">
+                    <span class="header-brand">☀️ Sunshine Events - RSVP</span>
+                    <h1 id="tituloEvento" >Casamento</h1>
+                    <p id="contagemRegressiva"></p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-perfil" onclick="abrirModalPerfil()">Meu Perfil</button>
+                    <button class="btn-novo" onclick="abrirModal()">+ Novo Convidado</button>
+                    <button class="btn-sair" onclick="sair()">Sair</button>
+                </div>
             </div>
-            <div>
-                <button class="btn-novo" style="background-color: #f39c12;" onclick="abrirModalPerfil()">Meu Perfil</button>
-                <button class="btn-novo" onclick="abrirModal()">+ Novo Convidado</button>
-                <button class="btn-sair" onclick="sair()">Sair</button>
+    
+            <div class="cards-container">                
+                <div class="card">
+                    <h3>Total na Lista</h3>
+                    <p id="cardTotal">0</p>
+                </div>
+                <div class="card confirmados">
+                    <h3>Confirmados</h3>
+                    <p id="cardConfirmados">0</p>
+                </div>
+                <div class="card pendentes">
+                    <h3>Pendentes</h3>
+                    <p id="cardPendentes">0</p>
+                </div>
+                <div class="card recusados">
+                    <h3>Não Vão</h3>
+                    <p id="cardRecusados">0</p>
+                </div>
             </div>
-        </div>
-
-    <div class="cards-container">
-            <!-- Seus cards já existentes (Total, Confirmados, etc...) ficam aqui -->
-            <div class="card">
-                <h3>Total na Lista</h3>
-                <p id="cardTotal">0</p>
+        
+            <!-- NOVA BARRA DE CONTROLES -->
+            <div class="controles-tabela">
+                <input type="text" id="buscaNome" placeholder="Buscar convidado por nome..." oninput="filtrarLista()">
+                
+                <select id="filtroStatus" onchange="filtrarLista()">
+                    <option value="todos">Todos os Status</option>
+                    <option value="confirmado">Confirmados</option>
+                    <option value="pendente">Pendentes</option>
+                    <option value="recusado">Não Vão</option>
+                </select>
+    
+                <button class="btn-exportar" onclick="exportarExcel()">Baixar Planilha (Excel)</button>
             </div>
-            <div class="card confirmados">
-                <h3>Confirmados</h3>
-                <p id="cardConfirmados">0</p>
+            <div class="tabela-wrapper">
+                <table>        
+                    <thead>
+                        <tr>
+                            <th>Nome do Convidado Titular</th>
+                            <th>Celular</th>
+                            <th>Acompanhantes Livres</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaConvidados">
+                        <tr><td colspan="5" style="text-align: center;">Carregando dados...</td></tr>
+                    </tbody>
+                </table>
+    
             </div>
-            <div class="card pendentes">
-                <h3>Pendentes</h3>
-                <p id="cardPendentes">0</p>
-            </div>
-            <div class="card recusados">
-                <h3>Não Vão</h3>
-                <p id="cardRecusados">0</p>
-            </div>
-        </div>
-
-        <!-- NOVA BARRA DE CONTROLES -->
-        <div class="controles-tabela">
-            <input type="text" id="buscaNome" placeholder="Buscar convidado por nome..." oninput="filtrarLista()">
             
-            <select id="filtroStatus" onchange="filtrarLista()">
-                <option value="todos">Todos os Status</option>
-                <option value="confirmado">Confirmados</option>
-                <option value="pendente">Pendentes</option>
-                <option value="recusado">Não Vão</option>
-            </select>
-
-            <button class="btn-exportar" onclick="exportarExcel()">Baixar Planilha (Excel)</button>
-        </div>
-
-        <table>        
-            <thead>
-                <tr>
-                    <th>Nome do Convidado Titular</th>
-                    <th>Celular</th>
-                    <th>Acompanhantes Livres</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaConvidados">
-                <tr><td colspan="5" style="text-align: center;">Carregando dados...</td></tr>
-            </tbody>
-        </table>
-
-        <!-- Modal de Cadastro/Edição -->
-        <div id="modalConvidado" class="modal-overlay">
-            <div class="modal-content">
-                <h2 id="modalTitulo">Cadastrar Convidado</h2>
-                <form id="formConvidado">
-                    <!-- ID oculto para sabermos se estamos editando ou criando -->
-                    <input type="hidden" id="convidadoId">
-                    
-                    <div class="form-group">
-                        <label>Nome Completo:</label>
-                        <input type="text" id="nome" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Celular (Ex: 11999999999):</label>
-                        <input type="text" id="celular" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Limite de Acompanhantes:</label>
-                        <input type="number" id="limite" min="0" value="0" required>
-                    </div>
-
-                    <div class="modal-acoes">
-                        <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
-                        <button type="submit" class="btn-salvar">Salvar</button>
-                    </div>
-                </form>
+            <!-- Modal de Cadastro/Edição -->
+            <div id="modalConvidado" class="modal-overlay">
+                <div class="modal-content">
+                    <h2 id="modalTitulo">Cadastrar Convidado</h2>
+                    <form id="formConvidado">
+                        <!-- ID oculto para sabermos se estamos editando ou criando -->
+                        <input type="hidden" id="convidadoId">
+                        
+                        <div class="form-group">
+                            <label>Nome Completo:</label>
+                            <input type="text" id="nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Celular (Ex: 11999999999):</label>
+                            <input type="text" id="celular" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Limite de Acompanhantes:</label>
+                            <input type="number" id="limite" min="0" value="0" required>
+                        </div>
+    
+                        <div class="modal-acoes">
+                            <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                            <button type="submit" class="btn-salvar">Salvar</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
-
-        <!-- Modal de Edição de Perfil -->
-        <div id="modalPerfil" class="modal-overlay">
-            <div class="modal-content">
-                <h2>Meu Perfil</h2>
-                <form id="formPerfil">
-                    <div class="form-group">
-                        <label>E-mail (Login):</label>
-                        <input type="email" id="perfilEmail" disabled style="background-color: #eee;">
-                    </div>
-                    <div class="form-group">
-                        <label>Nome Completo:</label>
-                        <input type="text" id="perfilNome" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Celular:</label>
-                        <input type="text" id="perfilCelular" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Nome do Evento:</label>
-                        <input type="text" id="perfilNomeEvento" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Data do Evento:</label>
-                        <input type="date" id="perfilDataEvento" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Nova Senha (deixe em branco para não alterar):</label>
-                        <input type="password" id="perfilSenha" autocomplete="new-password">
-                    </div>
-
-                    <div class="modal-acoes">
-                        <button type="button" class="btn-cancelar" onclick="fecharModalPerfil()">Cancelar</button>
-                        <button type="submit" class="btn-salvar">Salvar Alterações</button>
-                    </div>
-                </form>
+    
+            <!-- Modal de Edição de Perfil -->
+            <div id="modalPerfil" class="modal-overlay">
+                <div class="modal-content">
+                    <h2>Meu Perfil</h2>
+                    <form id="formPerfil">
+                        <div class="form-group">
+                            <label>E-mail (Login):</label>
+                            <input type="email" id="perfilEmail" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome Completo:</label>
+                            <input type="text" id="perfilNome" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Celular:</label>
+                            <input type="text" id="perfilCelular" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome do Evento:</label>
+                            <input type="text" id="perfilNomeEvento" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Data do Evento:</label>
+                            <input type="date" id="perfilDataEvento" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nova Senha (deixe em branco para não alterar):</label>
+                            <input type="password" id="perfilSenha" autocomplete="new-password">
+                        </div>
+    
+                        <div class="modal-acoes">
+                            <button type="button" class="btn-cancelar" onclick="fecharModalPerfil()">Cancelar</button>
+                            <button type="submit" class="btn-salvar">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 

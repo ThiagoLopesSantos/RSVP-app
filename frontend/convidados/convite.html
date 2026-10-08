@@ -8,7 +8,12 @@
 </head>
 <body>
 
-    <div class="card-convite">
+    <div class="convite-container">
+        <!-- LOGOMARCA -->
+        <div class="brand-header">
+            <h1>☀️ Sunshine Events</h2>
+            <p>Sistema de Gestão & RSVP</p>
+        </div>
         <!-- ETAPA 1: DIGITAR O CELULAR -->
         <div id="etapaBusca">
             <h2>Confirme sua Presença</h2>
@@ -19,7 +24,7 @@
                     <label>Celular (Ex: 21999999999):</label>
                     <input type="text" id="celularBusca" placeholder="Somente números com DDD" required>
                 </div>
-                <button type="submit" class="btn-primary">Acessar Convite</button>
+                <button type="submit" class="btn-primary .btn-acao">Acessar Convite</button>
             </form>
             <p id="msgErroBusca" style="color: #ff4757; font-size: 14px; text-align: center; margin-top: 15px; font-weight: bold;"></p>
         </div>
@@ -61,6 +66,10 @@
             <p id="textoConclusao">Seus dados foram salvos com sucesso. Agradecemos a confirmação e mal podemos esperar para celebrar com você!</p>
             <button type="button" class="btn-primary" onclick="window.location.reload()" style="margin-top: 20px;">Consultar outro número</button>
         </div>
+        <footer style="text-align: center; margin-top: 40px; color: #a4b0be; font-size: 11px; display:flex; flex-direction: column;">
+            <p>Um projeto feito por <strong style="color:#718093">Thiago Lopes Santos.</strong></p>
+            <p> Organização & Tecnologia por <strong style="color: #718093;">Sunshine Events.</strong></p>
+        </footer>
     </div>
 
     <script src="convite.js"></script>
