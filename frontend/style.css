@@ -261,6 +261,15 @@ input:disabled {
     margin-top: 20px;
 }
 
+.modal-erro {
+    color: #b00020;
+    background: #fdecea;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin: 8px 0;
+}
+
 .btn-cancelar {
     background-color: #e2e8f0;
     color: var(--primary-color);

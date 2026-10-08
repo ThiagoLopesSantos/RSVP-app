@@ -30,6 +30,31 @@ body {
     box-sizing: border-box;
 }
 
+/* Card Principal */
+.convite-container {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 480px;
+    box-sizing: border-box;
+    text-align: center;
+    
+    h2 {
+        font-family: 'Playfair Display', serif;
+        color: var(--primary-color);
+        margin-top: 0;
+        font-size: 24px;
+    }
+    
+    p {
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
 /* Cabeçalho da Marca */
 .brand-header {
     text-align: center;
@@ -57,29 +82,17 @@ body {
     }
 }
 
-/* Card Principal */
-.convite-container {
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    width: 100%;
-    max-width: 480px;
-    box-sizing: border-box;
+/* Identificação do evento */
+#infoEventoTopo {
+    margin-bottom: 20px;
     text-align: center;
 }
 
-.convite-container h2 {
-    font-family: 'Playfair Display', serif;
-    color: var(--primary-color);
-    margin-top: 0;
-    font-size: 24px;
-}
-
-.convite-container p {
-    color: var(--text-muted);
-    font-size: 14px;
-    line-height: 1.5;
+#tituloNomeEvento {
+    font-family: 'Playfair Display', 
+    serif; margin: 5px 0 0 0; 
+    color: #2f3542; 
+    font-size: 22px;
 }
 
 /* Formulários e Inputs */

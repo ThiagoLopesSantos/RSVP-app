@@ -28,17 +28,18 @@ def criar_tabelas():
             )
         """)
         
-        # Tabela de Convidados com admin_id e nome_acompanhante preservando o padrão
+        # Tabela de Convidados com índice único combinando admin_id e celular
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS convidados (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                admin_id INTEGER,
+                admin_id INTEGER NOT NULL,
                 nome_completo TEXT NOT NULL,
-                celular TEXT UNIQUE NOT NULL,
+                celular TEXT NOT NULL,
                 status_presenca TEXT DEFAULT 'pendente',
                 limite_acompanhantes INTEGER DEFAULT 0,
                 nome_acompanhante TEXT,
-                FOREIGN KEY (admin_id) REFERENCES administradores (id) ON DELETE CASCADE
+                FOREIGN KEY (admin_id) REFERENCES administradores (id),
+                UNIQUE(admin_id, celular)
             )
         """)
         

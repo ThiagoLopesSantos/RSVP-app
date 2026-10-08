@@ -68,6 +68,7 @@ def login_admin(credenciais: LoginSchema):
             "mensagem": f"Login realizado com sucesso! Bem-vindo de volta, {admin_encontrado[1]}.",
             "access_token": token_acesso,
             "token_type": "bearer",
+            "admin_id": admin_encontrado[0],
             "nome_evento": admin_encontrado[4],
             "data_evento": admin_encontrado[5]
         }
@@ -77,7 +78,12 @@ def cadastrar_convidado(convidado: ConvidadosSchema, admin_logado: dict = Depend
     try:
         with obter_conexao() as conexao:
             cursor = conexao.cursor()
-
+            
+            # Verifica se o celular já existe para ESTE administrador específico
+            cursor.execute("SELECT id FROM convidados WHERE celular = ? AND admin_id = ?", (convidado.celular, admin_logado["id"]))
+            if cursor.fetchone():
+                return {"status": "erro", "mensagem": "Este número de celular já está cadastrado na sua lista."}
+            
             # Vincula o convidado ao ID do administrador logado
             cursor.execute(""" 
                 INSERT INTO convidados (admin_id, nome_completo, celular, status_presenca, limite_acompanhantes)

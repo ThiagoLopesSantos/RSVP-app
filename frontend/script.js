@@ -110,13 +110,23 @@ function renderizarTabela(convidados) {
             descAcomp = `<b>Confirmados:</b> ${nomes}`;
         }
 
+        // Gera o link personalizado com o ID do admin logado
+        const adminId = localStorage.getItem('admin_id') || 1;
+        const baseUrl = window.location.href.replace('dashboard.html', 'convidados/convite.html');
+        const linkConvite = `${baseUrl}?evento=${adminId}`;
+
+        // Textos formatados para o WhatsApp
+        const msgConvite = encodeURIComponent(`Olá ${c.nome_completo}! É uma alegria ter você conosco. Por favor, acesse o link abaixo para confirmar sua presença no nosso evento: ${linkConvite}`);
+        const msgLembrete = encodeURIComponent(`Olá ${c.nome_completo}, passando para lembrar de confirmar sua presença no nosso evento pelo link: ${linkConvite}. Contamos com você!`);
+
         tr.innerHTML = `
             <td><strong>${c.nome_completo}</strong></td>
             <td>${c.celular}</td>
             <td>${descAcomp}</td>
             <td><span class="status ${classeStatus}">${c.status_presenca.toUpperCase()}</span></td>
             <td>
-                <button class="btn-acao btn-zap" onclick="cobrarWhatsApp('${c.nome_completo}', '${c.celular}')">WhatsApp</button>
+                <a href="https://api.whatsapp.com/send?phone=55${c.celular.replace(/\D/g, '')}&text=${msgConvite}" target="_blank" class="btn-acao" style="background-color: #25d366; color: white; padding: 6px 10px; text-decoration: none; border-radius: 4px; font-size: 12px; display: inline-block; margin-right: 4px;">📲 Convite</a>
+                <a href="https://api.whatsapp.com/send?phone=55${c.celular.replace(/\D/g, '')}&text=${msgLembrete}" target="_blank" class="btn-acao" style="background-color: #128c7e; color: white; padding: 6px 10px; text-decoration: none; border-radius: 4px; font-size: 12px; display: inline-block; margin-right: 4px;">⏰ Lembrete</a>
                 <button class="btn-acao btn-editar" onclick="abrirModal(${c.id}, '${c.nome_completo}', '${c.celular}', ${c.limite_acompanhantes})">Editar</button>
                 <button class="btn-acao btn-excluir" onclick="excluirConvidado(${c.id}, '${c.nome_completo}')">Excluir</button>
             </td>
@@ -226,6 +236,8 @@ function fecharModal() {
 
 document.getElementById('formConvidado').addEventListener('submit', async function(evento) {
     evento.preventDefault();
+    limparErroModal();
+
     const id = document.getElementById('convidadoId').value;
     const payload = {
         nome_completo: document.getElementById('nome').value,
@@ -236,20 +248,45 @@ document.getElementById('formConvidado').addEventListener('submit', async functi
     const metodo = id ? 'PUT' : 'POST';
     const rota = id ? `/admin/convidado/${id}` : '/admin/convidados/cadastrar';
 
-    const resposta = await fetch(`${API_URL}${rota}`, {
-        method: metodo,
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(payload)
-    });
+    try {
+        const resposta = await fetch(`${API_URL}${rota}`, {
+            method: metodo,
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(payload)
+        });
 
-    if (resposta.ok) {
-        fecharModal();
-        carregarConvidados(); 
-    } else {
-        const erro = await resposta.json();
-        alert(`Erro: ${erro.detail || erro.mensagem || 'Falha ao salvar'}`);
+        const dados = await resposta.json();
+
+        if (resposta.ok && dados.status === 'sucesso') {
+            fecharModal();
+            carregarConvidados();
+        } else {
+            mostrarErroModal(formatarErro(dados));
+        }
+    } catch (e) {
+        mostrarErroModal('Não foi possível conectar ao servidor.');
     }
 });
+
+function formatarErro(dados) {
+    // FastAPI (422) devolve "detail" como lista de objetos
+    if (Array.isArray(dados.detail)) {
+        return dados.detail.map(d => d.msg).join(', ');
+    }
+    return dados.mensagem || dados.detail || 'Não foi possível cadastrar o convidado.';
+}
+
+function mostrarErroModal(mensagem) {
+    const el = document.getElementById('modal-erro');
+    el.textContent = mensagem;
+    el.hidden = false;
+}
+
+function limparErroModal() {
+    const el = document.getElementById('modal-erro');
+    el.textContent = '';
+    el.hidden = true;
+}
 
 function sair() {
     localStorage.removeItem('meu_token_rsvp');
@@ -318,3 +355,25 @@ document.getElementById('formPerfil').addEventListener('submit', async function(
         alert(`Erro: ${dados.mensagem || dados.detail || 'Falha ao salvar'}`);
     }
 });
+
+// Exibe o link do convite na dashboard ao carregar a página
+window.addEventListener('DOMContentLoaded', () => {
+    const adminId = localStorage.getItem('admin_id') || 1;
+    // Pega a URL atual do site e aponta para a pasta de convidados
+    const baseUrl = window.location.href.replace('dashboard.html', 'convidados/convite.html');
+    const linkFinal = `${baseUrl}?evento=${adminId}`;
+    
+    const elementoLink = document.getElementById('linkConviteTexto');
+    if(elementoLink) {
+        elementoLink.innerText = linkFinal;
+    }
+});
+
+function copiarLinkConvite() {
+    const adminId = localStorage.getItem('admin_id') || 1;
+    const baseUrl = window.location.href.replace('dashboard.html', 'convidados/convite.html');
+    const linkFinal = `${baseUrl}?evento=${adminId}`;
+    
+    navigator.clipboard.writeText(linkFinal);
+    alert("Link do convite copiado com sucesso!");
+}

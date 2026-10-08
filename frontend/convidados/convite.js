@@ -1,6 +1,30 @@
 const API_URL = 'http://127.0.0.1:8000';
 let convidadoAtual = null;
 
+// ==================== CAPTURA DO ID DO EVENTO NA URL ====================
+// Exemplo de link que o convidado vai abrir: convite.html?evento=1
+const urlParams = new URLSearchParams(window.location.search);
+const adminIdEvento = urlParams.get('evento') || 1; // Padrão 1 caso venha sem parâmetro
+
+// Função para buscar e exibir o nome do evento no topo da página
+async function carregarInfoEvento() {
+    try {
+        const resposta = await fetch(`${API_URL}/rsvp/evento-info/${adminIdEvento}`);
+        const dados = await resposta.json();
+        
+        if (resposta.ok && dados.status === 'sucesso') {
+            document.getElementById('tituloNomeEvento').innerText = `Casamento de ${dados.nome_evento}`;
+        } else {
+            document.getElementById('tituloNomeEvento').innerText = `Portal de Convidados`;
+        }
+    } catch (erro) {
+        document.getElementById('tituloNomeEvento').innerText = `Portal de Convidados`;
+    }
+}
+
+// Executa assim que a página abre
+carregarInfoEvento();
+
 // ==================== 1. BUSCAR CONVIDADO POR CELULAR ====================
 document.getElementById('formBusca').addEventListener('submit', async function(evento) {
     evento.preventDefault();
@@ -17,7 +41,7 @@ document.getElementById('formBusca').addEventListener('submit', async function(e
     msgErro.innerText = 'Buscando seu convite...';
 
     try {
-        const resposta = await fetch(`${API_URL}/rsvp/buscar/${celular}`);
+        const resposta = await fetch(`${API_URL}/rsvp/buscar/${adminIdEvento}/${celular}`);
         const dados = await resposta.json();
 
         if (resposta.ok && dados.convidado) {
